@@ -2,7 +2,7 @@ import { useState } from "react";
 import Form from "./Form";
 import Canvas from "./Canvas";
 
-const pixels = 5;
+const pixels = 7;
 
 const Control = () => {
   const [trait, setTrait] = useState({
@@ -12,26 +12,28 @@ const Control = () => {
     w: 48 * pixels,
     h: 96 * pixels,
     stud: 16 * pixels,
-    windows: 0, 
+    windows: 0,
     windowW: 42 * pixels,
     windowH: 42 * pixels,
-    sill: 30 * pixels, 
-    header: 5.5 * pixels
+    sill: 24 * pixels,
+    header: 5.5 * pixels,
+    headerAmount: 0,
+    windowType: 0,
   });
 
-  const handleCoordinateChange = (e) => {
-    console.log(e.target.value);
-    setTrait({ ...trait, [e.target.name]: e.target.value * pixels });
+  const handleTraitChange = (e) => {
+    
+    setTrait({ ...trait, [e.target.name]: e.target.value * trait.pixels });
   };
 
   return (
     <div>
       <div className="row">
         <div className="col-4 mt-5">
-          <Form handleCoordinateChange={handleCoordinateChange} />
+          <Form handleTraitChange={handleTraitChange} trait={trait} />
         </div>
         <div className="col-6">
-          <Canvas trait={trait} />
+          <Canvas handleTraitChange={handleTraitChange} trait={trait} />
         </div>
       </div>
     </div>
