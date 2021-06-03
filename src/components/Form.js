@@ -54,6 +54,17 @@ const Form = ({ handleTraitChange, trait }) => {
               <option value="0">STANDARD</option>
               <option value="1">CASEMENT</option>
             </select>
+            <label>Placement</label>
+            <select
+              name="placement"
+              className="form-control mb-3"
+              onChange={(e) => handleTraitChange(e)}
+              disabled={!trait.windowType}
+            >
+              <option value="0">CENTER</option>
+              <option value="1">LEFT</option>
+              <option value="2">RIGHT</option>
+            </select>
             <label>Sill Height (inches)</label>
             <input
               className="form-control mb-3"

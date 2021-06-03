@@ -17,17 +17,16 @@ const drawArrow = (p5, base, vec, h, p) => {
   p5.translate(base.x + vec.x / 2, base.y + vec.y / 2);
   p5.rectMode(p5.CENTER);
   p5.noStroke();
-  p5.rect(0, 0, 3 * p, 3 * p);
+  p5.rect(0, 0, 4 * p, 4 * p);
+  p5.textSize(150 / p)
   p5.textAlign(p5.CENTER, p5.CENTER);
   p5.text(`${h / p}"`, 0, 0);
   p5.pop();
 };
 
-export const wall = (p5, trait, handleTraitChange) => {
-
-
+export const wall = (p5, trait) => {
   const xcenter = p5.windowWidth / 4;
-  const ycenter = p5.windowHeight / 2;
+  const ycenter = p5.windowHeight / 2 + trait.windowH/4;
   const boardWidth = trait.twoByW;
 
   const rightBoard = {
@@ -133,32 +132,33 @@ export const wall = (p5, trait, handleTraitChange) => {
 };
 
 export const window = (p5, trait) => {
-
-  const crippleHeight = trait.h - (trait.windowH + trait.sill) - trait.twoByW * 2
-
-  if (trait.windowType === 0) {
-    trait.windowW = 42 * trait.pixels;
-  }
-
-  if (trait.windowW > 42 * trait.pixels) {
-    trait.windowW = 42 * trait.pixels;
-  }
-
-  if (trait.sill < 10 * trait.pixels) {
-    trait.sill+=trait.pixels/4
-  }
-
-  if (trait.h - trait.sill < trait.windowH + trait.header + trait.twoByW*2) {
-    trait.sill-=trait.pixels/4
-  }
   
-
+  const crippleHeight =
+    trait.h - (trait.windowH + trait.sill) - trait.twoByW * 2;
   const xcenter = p5.windowWidth / 4;
-  const ycenter = p5.windowHeight / 2;
+  const ycenter = p5.windowHeight / 2 + trait.windowH/4;
   const bottomBoard = {
     x: xcenter,
     y: ycenter + (trait.h / 2 + trait.twoByW / 2),
   };
+  
+  if (trait.windowType === 0) {
+    trait.windowW = 42 * trait.pixels;
+  }
+  
+  if (trait.windowW > 42 * trait.pixels) {
+    trait.windowW = 42 * trait.pixels;
+  }
+  
+  if (trait.sill < 10 * trait.pixels) {
+    trait.sill += trait.pixels / 4;
+  }
+  
+  if (trait.h - trait.sill < trait.windowH + trait.header + trait.twoByW * 2) {
+    trait.sill -= trait.pixels/4
+  }
+  
+  
 
   p5.push();
   p5.rectMode(p5.CENTER);
@@ -170,6 +170,13 @@ export const window = (p5, trait) => {
   const centerSillHeight =
     -trait.sill / 2 - trait.windowH / 2 - trait.twoByW / 2;
   const totalSillWindowHeight = trait.sill + trait.windowH + trait.twoByW;
+  let casementWidth = 0
+
+  if (trait.placement/trait.pixels === 1) {
+    casementWidth = -(trait.w - trait.windowW)/2  + trait.twoByW*2
+  } else if (trait.placement/trait.pixels === 2) {
+    casementWidth = (trait.w - trait.windowW)/2  - trait.twoByW*2
+  }
 
   if (trait.stud >= 24 * trait.pixels) {
     p5.rect(0, -trait.sill / 2, trait.twoByW, trait.sill);
@@ -177,18 +184,19 @@ export const window = (p5, trait) => {
     p5.rect(8 * trait.pixels, -trait.sill / 2, trait.twoByW, trait.sill);
     p5.rect(-8 * trait.pixels, -trait.sill / 2, trait.twoByW, trait.sill);
   }
-  p5.rect(centerWindowX, centerSillHeight, trait.twoByW, totalSillWindowHeight);
+  p5.rect(centerWindowX + casementWidth, centerSillHeight, trait.twoByW, totalSillWindowHeight);
   p5.rect(
-    -centerWindowX,
+    -centerWindowX + casementWidth,
     centerSillHeight,
     trait.twoByW,
     totalSillWindowHeight
   );
 
   // sill
-  p5.translate(0, -trait.sill);
+  
+  p5.translate(casementWidth, -trait.sill);
 
-  if (trait.windowW/trait.pixels === 42) {
+  if (trait.windowW / trait.pixels === 42) {
     p5.rect(0, 0, trait.windowW + trait.twoByW * 2, trait.twoByW);
   } else {
     p5.rect(0, 0, trait.windowW, trait.twoByW);
@@ -199,38 +207,24 @@ export const window = (p5, trait) => {
   p5.rect(0, 0, trait.windowW, trait.windowH);
 
   // lintel
-  p5.translate(0, -trait.twoByW / 2 - trait.windowH / 2);
+  p5.translate(-casementWidth, -trait.twoByW / 2 - trait.windowH / 2);
   p5.rect(0, 0, trait.w - trait.twoByW * 2, trait.twoByW);
 
   // cripple
-  
-  p5.translate(0, -trait.twoByW/2)
+
+  p5.translate(0, -trait.twoByW / 2);
   if (trait.stud >= 24 * trait.pixels) {
-    p5.rect(
-      0,
-      -crippleHeight / 2,
-      trait.twoByW,
-      crippleHeight
-    );
+    p5.rect(0, -crippleHeight / 2, trait.twoByW, crippleHeight);
   } else {
-    p5.rect(
-      8 * trait.pixels,
-      -crippleHeight / 2,
-      trait.twoByW,
-      crippleHeight
-    );
-    p5.rect(
-      -8 * trait.pixels,
-      -crippleHeight / 2,
-      trait.twoByW,
-      crippleHeight
-    );
+    p5.rect(8 * trait.pixels, -crippleHeight / 2, trait.twoByW, crippleHeight);
+    p5.rect(-8 * trait.pixels, -crippleHeight / 2, trait.twoByW, crippleHeight);
   }
 
   // header
   p5.translate(0, -trait.header / 2);
   p5.rect(0, 0, trait.w - trait.twoByW * 2, trait.header);
   p5.textAlign(p5.CENTER, p5.CENTER);
+  p5.textSize(150 / trait.pixels)
   p5.text(`2 x ${Math.ceil(trait.header / trait.pixels)}`, 0, 10);
   const headerTypes = ["SINGLE", "DOUBLE", "TRIPLE"];
   p5.text(`${headerTypes[trait.headerAmount / trait.pixels]} HEADER`, 0, -10);
@@ -263,10 +257,7 @@ export const window = (p5, trait) => {
 
   const lintel = bottomBoard.y - trait.windowH - trait.sill - trait.twoByW * 2;
   let crippleArrow0 = p5.createVector(xcenter - 15 * trait.pixels, lintel);
-  let crippleArrow1 = p5.createVector(
-    0,
-    -crippleHeight
-  );
+  let crippleArrow1 = p5.createVector(0, -crippleHeight);
   drawArrow(
     p5,
     crippleArrow0,
@@ -276,7 +267,7 @@ export const window = (p5, trait) => {
   );
 
   let windowArrowH0 = p5.createVector(
-    xcenter - trait.windowW / 4,
+    xcenter + casementWidth - trait.windowW / 4,
     lintel + trait.windowH + trait.twoByW
   );
   let windowArrowH1 = p5.createVector(0, -trait.windowH);
@@ -284,7 +275,7 @@ export const window = (p5, trait) => {
   drawArrow(p5, windowArrowH0, windowArrowH1, trait.windowH, trait.pixels);
 
   let windowArrowW0 = p5.createVector(
-    xcenter - trait.windowW / 2,
+    xcenter + casementWidth - trait.windowW / 2,
     lintel + trait.windowH + trait.twoByW - 10 * trait.pixels
   );
   let windowArrowW1 = p5.createVector(trait.windowW, 0);
